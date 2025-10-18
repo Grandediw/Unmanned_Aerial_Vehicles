@@ -1,0 +1,182 @@
+<?xml version="1.0"?>
+<robot name="quadrotor">
+  
+  <!-- Base link (center of quadrotor) -->
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.3 0.3 0.1"/>
+      </geometry>
+      <material name="black">
+        <color rgba="0.2 0.2 0.2 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.3 0.3 0.1"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.5"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="0.0023" ixy="0" ixz="0" iyy="0.0023" iyz="0" izz="0.0046"/>
+    </inertial>
+  </link>
+
+  <!-- Front left propeller -->
+  <link name="prop_fl">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.1" length="0.02"/>
+      </geometry>
+      <material name="red">
+        <color rgba="1 0 0 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <!-- Front right propeller -->
+  <link name="prop_fr">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.1" length="0.02"/>
+      </geometry>
+      <material name="red">
+        <color rgba="1 0 0 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <!-- Back left propeller -->
+  <link name="prop_bl">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.1" length="0.02"/>
+      </geometry>
+      <material name="blue">
+        <color rgba="0 0 1 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <!-- Back right propeller -->
+  <link name="prop_br">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.1" length="0.02"/>
+      </geometry>
+      <material name="blue">
+        <color rgba="0 0 1 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <!-- Arms -->
+  <link name="arm_fl">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.2 0.02 0.02"/>
+      </geometry>
+      <material name="gray">
+        <color rgba="0.5 0.5 0.5 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <link name="arm_fr">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.2 0.02 0.02"/>
+      </geometry>
+      <material name="gray">
+        <color rgba="0.5 0.5 0.5 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <link name="arm_bl">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.2 0.02 0.02"/>
+      </geometry>
+      <material name="gray">
+        <color rgba="0.5 0.5 0.5 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <link name="arm_br">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.2 0.02 0.02"/>
+      </geometry>
+      <material name="gray">
+        <color rgba="0.5 0.5 0.5 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <!-- Joints -->
+  <joint name="arm_fl_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="arm_fl"/>
+    <origin xyz="0.1 0.1 0" rpy="0 0 0.785"/>
+  </joint>
+
+  <joint name="arm_fr_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="arm_fr"/>
+    <origin xyz="0.1 -0.1 0" rpy="0 0 -0.785"/>
+  </joint>
+
+  <joint name="arm_bl_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="arm_bl"/>
+    <origin xyz="-0.1 0.1 0" rpy="0 0 2.356"/>
+  </joint>
+
+  <joint name="arm_br_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="arm_br"/>
+    <origin xyz="-0.1 -0.1 0" rpy="0 0 -2.356"/>
+  </joint>
+
+  <joint name="prop_fl_joint" type="continuous">
+    <parent link="arm_fl"/>
+    <child link="prop_fl"/>
+    <origin xyz="0.1 0 0.03" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <joint name="prop_fr_joint" type="continuous">
+    <parent link="arm_fr"/>
+    <child link="prop_fr"/>
+    <origin xyz="0.1 0 0.03" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <joint name="prop_bl_joint" type="continuous">
+    <parent link="arm_bl"/>
+    <child link="prop_bl"/>
+    <origin xyz="0.1 0 0.03" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <joint name="prop_br_joint" type="continuous">
+    <parent link="arm_br"/>
+    <child link="prop_br"/>
+    <origin xyz="0.1 0 0.03" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+</robot>

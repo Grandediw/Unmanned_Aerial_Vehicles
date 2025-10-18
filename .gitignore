@@ -1,0 +1,57 @@
+# ROS2 and Colcon build artifacts
+build/
+install/
+log/
+*.egg-info/
+dist/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+
+# Python virtual environments
+venv/
+env/
+ENV/
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# ROS specific
+.rosws
+.colcon
+devel/
+.catkin_workspace
+
+# Build and test outputs
+build_*/
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+
+# Python specific
+.pytest_cache/
+.coverage
+htmlcov/
+*.log
+
+# Data and results files
+*.csv
+*.txt
+results/
+data/
+*.bag
+
+# System files
+.env
+.env.local
+*.pyc

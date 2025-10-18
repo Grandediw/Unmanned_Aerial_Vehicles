@@ -1,0 +1,304 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <world name="quadrotor_world">
+    
+    <!-- Physics -->
+    <physics name="default_physics" default="0" type="ode">
+      <gravity>0 0 -9.81</gravity>
+      <ode>
+        <solver>
+          <type>quick</type>
+          <iters>50</iters>
+          <sor>1.0</sor>
+        </solver>
+        <constraints>
+          <cfm>0.0</cfm>
+          <erp>0.2</erp>
+          <contact_max_correcting_vel>100.0</contact_max_correcting_vel>
+          <contact_surface_layer>0.001</contact_surface_layer>
+        </constraints>
+      </ode>
+      <real_time_factor>1.0</real_time_factor>
+      <real_time_update_rate>1000.0</real_time_update_rate>
+    </physics>
+
+    <!-- Scene -->
+    <scene>
+      <ambient>0.4 0.4 0.4 1</ambient>
+      <background>0.7 0.7 1 1</background>
+      <shadows>true</shadows>
+    </scene>
+
+    <!-- Sun -->
+    <include>
+      <uri>model://sun</uri>
+    </include>
+
+    <!-- Ground plane -->
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+
+    <!-- Grid pattern for visual reference -->
+    <model name="grid">
+      <pose>0 0 0.01 0 0 0</pose>
+      <static>true</static>
+      <link name="grid_link">
+        <visual name="grid_visual">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>20 20</size>
+            </plane>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Grey</name>
+            </script>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Reference markers -->
+    <model name="target_marker">
+      <pose>0 0 1 0 0 0</pose>
+      <static>true</static>
+      <link name="target_link">
+        <visual name="target_visual">
+          <geometry>
+            <sphere>
+              <radius>0.1</radius>
+            </sphere>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Red</name>
+            </script>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Coordinate frame indicator -->
+    <model name="axes">
+      <pose>1 1 0 0 0 0</pose>
+      <static>true</static>
+      <link name="x_axis">
+        <pose>0.5 0 0.1 0 1.57079 0</pose>
+        <visual name="x_visual">
+          <geometry>
+            <cylinder>
+              <radius>0.01</radius>
+              <length>1</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Red</name>
+            </script>
+          </material>
+        </visual>
+      </link>
+      <link name="y_axis">
+        <pose>0 0.5 0.1 1.57079 0 0</pose>
+        <visual name="y_visual">
+          <geometry>
+            <cylinder>
+              <radius>0.01</radius>
+              <length>1</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Green</name>
+            </script>
+          </material>
+        </visual>
+      </link>
+      <link name="z_axis">
+        <pose>0 0 0.6 0 0 0</pose>
+        <visual name="z_visual">
+          <geometry>
+            <cylinder>
+              <radius>0.01</radius>
+              <length>1</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Blue</name>
+            </script>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Simple quadrotor visual model -->
+    <model name="quadrotor_visual">
+      <pose>0 0 1 0 0 0</pose>
+      <link name="base_link">
+        <!-- Main body -->
+        <visual name="body_visual">
+          <geometry>
+            <box>
+              <size>0.2 0.2 0.05</size>
+            </box>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Black</name>
+            </script>
+          </material>
+        </visual>
+
+        <!-- Arms -->
+        <visual name="arm1_visual">
+          <pose>0.15 0 0 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.01</radius>
+              <length>0.3</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Grey</name>
+            </script>
+          </material>
+        </visual>
+
+        <visual name="arm2_visual">
+          <pose>-0.15 0 0 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.01</radius>
+              <length>0.3</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Grey</name>
+            </script>
+          </material>
+        </visual>
+
+        <visual name="arm3_visual">
+          <pose>0 0.15 0 1.57079 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.01</radius>
+              <length>0.3</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Grey</name>
+            </script>
+          </material>
+        </visual>
+
+        <visual name="arm4_visual">
+          <pose>0 -0.15 0 1.57079 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.01</radius>
+              <length>0.3</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Grey</name>
+            </script>
+          </material>
+        </visual>
+
+        <!-- Propellers -->
+        <visual name="prop1_visual">
+          <pose>0.15 0.15 0.05 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.08</radius>
+              <length>0.005</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Blue</name>
+            </script>
+          </material>
+        </visual>
+
+        <visual name="prop2_visual">
+          <pose>-0.15 -0.15 0.05 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.08</radius>
+              <length>0.005</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Blue</name>
+            </script>
+          </material>
+        </visual>
+
+        <visual name="prop3_visual">
+          <pose>0.15 -0.15 0.05 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.08</radius>
+              <length>0.005</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Red</name>
+            </script>
+          </material>
+        </visual>
+
+        <visual name="prop4_visual">
+          <pose>-0.15 0.15 0.05 0 0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.08</radius>
+              <length>0.005</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Red</name>
+            </script>
+          </material>
+        </visual>
+      </link>
+
+      <!-- Plugin to follow ROS transforms -->
+      <plugin name="gazebo_ros_p3d" filename="libgazebo_ros_p3d.so">
+        <ros>
+          <namespace>/quadrotor</namespace>
+        </ros>
+        <body_name>base_link</body_name>
+        <frame_name>world</frame_name>
+        <update_rate>50.0</update_rate>
+      </plugin>
+    </model>
+
+  </world>
+</sdf>
