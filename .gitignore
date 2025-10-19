@@ -51,6 +51,16 @@ results/
 data/
 *.bag
 
+# LaTeX files (keep papers private)
+*.tex
+*.aux
+*.log
+*.bbl
+*.blg
+*.out
+*.pdf
+*.synctex.gz
+
 # System files
 .env
 .env.local
