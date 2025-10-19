@@ -27,29 +27,16 @@ class GaussianProcessNode(Node):
     def __init__(self):
         super().__init__('gaussian_process_node')
         
-        # Declare parameters
+        # Declare parameters (for documentation, though GP uses fixed parameters)
         self.declare_parameter('enabled', True)
-        self.declare_parameter('kernel', 'rbf')
-        self.declare_parameter('length_scale', 0.5)
-        self.declare_parameter('sigma', 0.1)
-        self.declare_parameter('noise_variance', 0.01)
         self.declare_parameter('training_interval', 10)
         
         # Get parameters
         self.enabled = self.get_parameter('enabled').value
-        kernel = self.get_parameter('kernel').value
-        length_scale = self.get_parameter('length_scale').value
-        sigma = self.get_parameter('sigma').value
-        noise_variance = self.get_parameter('noise_variance').value
         self.training_interval = self.get_parameter('training_interval').value
         
-        # Initialize Gaussian Process
-        self.gp = GaussianProcess(
-            kernel=kernel,
-            length_scale=length_scale,
-            sigma=sigma,
-            noise_variance=noise_variance
-        )
+        # Initialize Gaussian Process (uses default parameters from class)
+        self.gp = GaussianProcess()
         
         # Training data buffers
         self.X_train = []  # State-control pairs
@@ -92,11 +79,8 @@ class GaussianProcessNode(Node):
         
         self.get_logger().info(
             f"Gaussian Process Node initialized\n"
-            f"  Kernel: {kernel}\n"
-            f"  Length scale: {length_scale}\n"
-            f"  Sigma: {sigma}\n"
-            f"  Noise variance: {noise_variance}\n"
-            f"  Training interval: {self.training_interval} steps"
+            f"  Training interval: {self.training_interval} steps\n"
+            f"  Enabled: {self.enabled}"
         )
     
     def state_callback(self, msg):

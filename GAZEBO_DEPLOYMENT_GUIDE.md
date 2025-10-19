@@ -395,6 +395,57 @@ ros2 launch quadrotor_gp_mpc gazebo_gz_x500_mpc.launch.py \
 }
 ```
 
+## Troubleshooting
+
+### Issue 1: Package Dependencies Missing
+**Error**: `PackageNotFoundError: "package 'gazebo_ros' not found"`
+
+**Solution**:
+```bash
+# Install all required ROS2 packages
+sudo apt-get install -y \
+    ros-humble-gazebo-ros \
+    ros-humble-gazebo-plugins \
+    ros-humble-gazebo-msgs \
+    ros-humble-robot-state-publisher \
+    ros-humble-ros-gz-bridge \
+    ros-humble-xacro
+
+# Rebuild package
+colcon build --packages-select quadrotor_gp_mpc
+```
+
+### Issue 2: MPC Node Initialization Error
+**Error**: `TypeError: QuadrotorMPC.__init__() got an unexpected keyword argument 'N'`
+
+**Solution**: The MPC class doesn't accept configuration parameters in __init__. It uses default values from the class definition. Parameters should be accessed as class attributes after instantiation.
+
+### Issue 3: Gazebo Server Crashes
+**Error**: `[ERROR] [gzserver-1]: process has died [pid XXXX, exit code 255]`
+
+**Solution**:
+- Ensure compatibility between gazebo-classic and gz-garden versions
+- Remove conflicting `gz-tools2` if installed: `sudo apt-get remove -y gz-tools2`
+- Use basic `gzserver` without plugins in launch file
+- Check `/opt/ros/humble` for Gazebo installation
+
+### Issue 4: Gazebo Bridge Topic Failures
+**Warning**: `Failed to create a bridge for topic [/gz_x500/state]`
+
+**Solution**:
+- This is expected if using Gazebo Classic (gazebo11) with gazebo_ros bridge
+- Topics will auto-create when Gazebo publishes on Gazebo Transport
+- MPC and GP nodes can still function with manual topic publishing
+- Alternative: Implement custom gazebo_ros plugins for state publishing
+
+### Issue 5: Entity Already Exists in Gazebo
+**Error**: `Spawn Entity: Entity [gz_x500] already exists`
+
+**Solution**:
+- Kill all existing gzserver processes: `killall -9 gzserver`
+- Clear Gazebo cache: `rm -rf ~/.gz/`
+- Restart the launch file
+
 ## Next Steps
 
 1. **Validate Control Performance**

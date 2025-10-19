@@ -14,7 +14,7 @@ import os
 import launch
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription
-from launch.conditions import IfCondition
+from launch.conditions import IfCondition, UnlessCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, Command
 from launch_ros.actions import Node
@@ -29,14 +29,19 @@ def generate_launch_description():
     pkg_quadrotor_gp_mpc = FindPackageShare(package='quadrotor_gp_mpc').find('quadrotor_gp_mpc')
     
     # Get paths
-    urdf_file = os.path.join(pkg_quadrotor_gp_mpc, 'urdf', 'quadrotor.urdf')
+    urdf_file = os.path.join(pkg_quadrotor_gp_mpc, 'share', 'quadrotor_gp_mpc', 'urdf', 'quadrotor.urdf')
+    
+    # Fallback if installed path doesn't exist
+    if not os.path.exists(urdf_file):
+        urdf_file = os.path.join(pkg_quadrotor_gp_mpc, 'urdf', 'quadrotor.urdf')
+    
     worlds_path = os.path.join(pkg_quadrotor_gp_mpc, 'worlds')
     
     # Gazebo world file for x500
     gazebo_world = os.path.join(worlds_path, 'gz_x500_world.sdf')
     if not os.path.exists(gazebo_world):
         # Fallback to default empty world
-        gazebo_world = os.path.join(worlds_path, 'empty.sdf')
+        gazebo_world = ""  # Use default Gazebo empty world
     
     # Launch arguments
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
@@ -99,23 +104,16 @@ def generate_launch_description():
         default_value='100',
         description='Control loop rate in Hz')
     
-    # Start Gazebo server
-    start_gazebo_server_cmd = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(pkg_gazebo_ros, 'launch', 'gzserver.launch.py')
-        ),
-        launch_arguments={
-            'world': gazebo_world,
-            'verbose': verbose
-        }.items()
+    # Start Gazebo (server is always running, GUI is conditional)
+    start_gazebo_server_cmd = ExecuteProcess(
+        cmd=['gzserver'],
+        output='screen'
     )
     
-    # Start Gazebo client (GUI)
-    start_gazebo_client_cmd = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(pkg_gazebo_ros, 'launch', 'gzclient.launch.py')
-        ),
-        condition=launch.conditions.UnlessCondition(headless)
+    start_gazebo_gui_cmd = ExecuteProcess(
+        cmd=['gzclient'],
+        output='screen',
+        condition=UnlessCondition(headless)
     )
     
     # Robot State Publisher
@@ -249,7 +247,7 @@ def generate_launch_description():
     
     # Add Gazebo actions
     ld.add_action(start_gazebo_server_cmd)
-    ld.add_action(start_gazebo_client_cmd)
+    ld.add_action(start_gazebo_gui_cmd)
     
     # Add ROS2 nodes
     ld.add_action(robot_state_publisher_cmd)

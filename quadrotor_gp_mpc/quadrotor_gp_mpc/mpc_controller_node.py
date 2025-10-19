@@ -32,22 +32,14 @@ class MPCControllerNode(Node):
         
         # Declare parameters
         self.declare_parameter('control_rate', 100)
-        self.declare_parameter('horizon', 20)
-        self.declare_parameter('dt', 0.01)
-        self.declare_parameter('max_thrust', 2.0)
-        self.declare_parameter('max_torque', 0.1)
         self.declare_parameter('enabled', True)
         
         # Get parameters
         self.control_rate = self.get_parameter('control_rate').value
-        horizon = self.get_parameter('horizon').value
-        dt = self.get_parameter('dt').value
-        self.max_thrust = self.get_parameter('max_thrust').value
-        self.max_torque = self.get_parameter('max_torque').value
         self.enabled = self.get_parameter('enabled').value
         
-        # Initialize MPC controller
-        self.mpc = QuadrotorMPC(N=horizon, dt=dt)
+        # Initialize MPC controller (uses default parameters from class)
+        self.mpc = QuadrotorMPC()
         
         # State tracking
         self.current_state = np.zeros(12)
@@ -95,7 +87,6 @@ class MPCControllerNode(Node):
         self.get_logger().info(
             f"MPC Controller initialized\n"
             f"  Control rate: {self.control_rate} Hz\n"
-            f"  Horizon: {horizon}\n"
             f"  Enabled: {self.enabled}"
         )
     
@@ -147,8 +138,9 @@ class MPCControllerNode(Node):
             # Convert acceleration to thrust and torques
             # Simplified model: thrust is total vertical acceleration
             mass = 0.5  # kg
+            max_thrust = 2.0  # N
             thrust = mass * accel_cmd[2]
-            thrust = np.clip(thrust, 0.0, self.max_thrust)
+            thrust = np.clip(thrust, 0.0, max_thrust)
             
             # Attitude errors
             phi_cmd = np.clip(kp * accel_cmd[1], -0.3, 0.3)
@@ -161,9 +153,10 @@ class MPCControllerNode(Node):
             tau_r = -2.0 * self.current_state[11]
             
             # Saturate torques
-            tau_p = np.clip(tau_p, -self.max_torque, self.max_torque)
-            tau_q = np.clip(tau_q, -self.max_torque, self.max_torque)
-            tau_r = np.clip(tau_r, -self.max_torque, self.max_torque)
+            max_torque = 0.1  # N*m
+            tau_p = np.clip(tau_p, -max_torque, max_torque)
+            tau_q = np.clip(tau_q, -max_torque, max_torque)
+            tau_r = np.clip(tau_r, -max_torque, max_torque)
             
             self.control_input = np.array([thrust, tau_p, tau_q, tau_r])
             
