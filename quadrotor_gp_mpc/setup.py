@@ -12,6 +12,7 @@ setup(
         ('share/' + package_name, ['package.xml']),
         ('share/' + package_name + '/launch', ['launch/rviz_visualization.launch.py']),
         ('share/' + package_name + '/launch', ['launch/gazebo_simulation.launch.py']),
+        ('share/' + package_name + '/launch', ['launch/gazebo_gz_x500_mpc.launch.py']),
         ('share/' + package_name + '/urdf', ['urdf/quadrotor.urdf']),
         ('share/' + package_name + '/worlds', ['worlds/quadrotor_demo.world']),
     ],
@@ -36,6 +37,11 @@ setup(
             'results_visualizer = quadrotor_gp_mpc.results_visualizer:main',
             'main_system = quadrotor_gp_mpc.main:main',
             'demo_system = quadrotor_gp_mpc.demo_system:main',
+            # ROS2 Nodes for Gazebo integration
+            'mpc_controller_node = quadrotor_gp_mpc.mpc_controller_node:main',
+            'gaussian_process_node = quadrotor_gp_mpc.gaussian_process_node:main',
+            'reference_trajectory_node = quadrotor_gp_mpc.reference_trajectory_node:main',
+            'performance_metrics_node = quadrotor_gp_mpc.performance_metrics_node:main',
         ],
     },
 )
