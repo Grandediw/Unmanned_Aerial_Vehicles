@@ -52,7 +52,7 @@ This document presents comprehensive side-by-side comparison results between two
 
 ### Visualization
 
-![Hover Comparison](/tmp/comparison_hover.png)
+![Hover Comparison](docs/images/comparison_hover.png)
 
 **Figure 1:** Hover trajectory comparison showing 8 analysis panels:
 - **[0,0]** Tracking error convergence from initial offset to steady-state
@@ -100,7 +100,7 @@ This document presents comprehensive side-by-side comparison results between two
 
 ### Visualization
 
-![Step Response Comparison](/tmp/comparison_step.png)
+![Step Response Comparison](docs/images/comparison_step.png)
 
 **Figure 2:** Step response comparison:
 - **[0,0]** Error spike at t=5s step, rapid convergence
@@ -148,7 +148,7 @@ This document presents comprehensive side-by-side comparison results between two
 
 ### Visualization
 
-![Circle Trajectory Comparison](/tmp/comparison_circle.png)
+![Circle Trajectory Comparison](docs/images/comparison_circle.png)
 
 **Figure 3:** Circular trajectory comparison:
 - **[0,0]** Tracking error decreases as controllers learn the pattern
@@ -199,7 +199,7 @@ This document presents comprehensive side-by-side comparison results between two
 
 ### Visualization
 
-![Figure-8 Trajectory Comparison](/tmp/comparison_figure8.png)
+![Figure-8 Trajectory Comparison](docs/images/comparison_figure8.png)
 
 **Figure 4:** Figure-8 trajectory comparison:
 - **[0,0]** Error varies with trajectory curvature changes
