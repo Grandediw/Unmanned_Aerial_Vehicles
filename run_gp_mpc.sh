@@ -1,7 +1,7 @@
 #!/bin/bash
 # filepath: /home/grandediw/ros2_px4_offboard_example_ws/run_mpc_gp_enhanced.sh
 
-echo "🧠 Starting GP-Enhanced MPC Demo..."
+echo "Starting GP-Enhanced MPC Demo..."
 
 # Force GP mode
 export GP_USE_MODEL=true
@@ -10,11 +10,11 @@ export GP_MODEL_PATH="/home/grandediw/ros2_px4_offboard_example_ws/gp_models/gp_
 
 # Verify GP model exists
 if [[ ! -f "$GP_MODEL_PATH" ]]; then
-    echo "❌ GP model not found: $GP_MODEL_PATH"
+    echo "GP model not found: $GP_MODEL_PATH"
     exit 1
 fi
 
-echo "✅ Using GP model: $(basename "$GP_MODEL_PATH")"
+echo "Using GP model: $(basename "$GP_MODEL_PATH")"
 
 # Run the main script
 exec "./run_mpc_velocity_control.sh" "$@"

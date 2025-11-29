@@ -87,15 +87,15 @@
 # wait
 #!/bin/bash
 
-echo "🚀 Starting PX4 SITL with Gazebo and Velocity PID Demo (with rosbag)..."
-echo "📝 This will:"
+echo "Starting PX4 SITL with Gazebo and Velocity PID Demo (with rosbag)..."
+echo "This will:"
 echo "   1. Launch PX4 SITL with Gazebo visualization"
 echo "   2. Spawn x500 drone automatically"
 echo "   3. Start MicroXRCE-DDS agent"
 echo "   4. Run the velocity PID demo (advanced velocity control)"
 echo "   5. (Optionally) record a rosbag for analysis"
 echo ""
-echo "🎯 PID Controller features:"
+echo "PID Controller features:"
 echo "   • Proportional-Integral-Derivative control"
 echo "   • Real-time velocity feedback"
 echo "   • Figure-8 velocity pattern"
@@ -117,10 +117,10 @@ TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
 BAG_DIR="bags"
 BAG_NAME="${BAG_DIR}/pid_cascade_${TIMESTAMP}"
 
-echo -e "${BLUE}⚙️  Configuration:${NC}"
-echo -e "   📦 rosbag recording: ${YELLOW}${ENABLE_ROSBAG}${NC}"
+echo -e "${BLUE}Configuration:${NC}"
+echo -e "   rosbag recording: ${YELLOW}${ENABLE_ROSBAG}${NC}"
 if [[ "$ENABLE_ROSBAG" == "true" ]]; then
-    echo -e "   📁 Bag name: ${GREEN}${BAG_NAME}${NC}"
+    echo -e "   Bag name: ${GREEN}${BAG_NAME}${NC}"
 fi
 echo ""
 
@@ -137,12 +137,12 @@ cleanup() {
 
     # Stop rosbag if running
     if [[ -n "$ROSBAG_PID" ]]; then
-        echo -e "${BLUE}🛑 Stopping rosbag recording (PID: ${ROSBAG_PID})...${NC}"
+        echo -e "${BLUE}Stopping rosbag recording (PID: ${ROSBAG_PID})...${NC}"
         kill "$ROSBAG_PID" 2>/dev/null
         wait "$ROSBAG_PID" 2>/dev/null
-        echo -e "${GREEN}✅ rosbag saved: ${BAG_NAME}${NC}"
+        echo -e "${GREEN} rosbag saved: ${BAG_NAME}${NC}"
 
-        echo -e "${BLUE}📊 Bag summary:${NC}"
+        echo -e "${BLUE}Bag summary:${NC}"
         ros2 bag info "$BAG_NAME" 2>/dev/null || echo "   (Bag info not available)"
     fi
 
@@ -154,7 +154,7 @@ cleanup() {
     pkill -f gz 2>/dev/null
     pkill -f MicroXRCE 2>/dev/null
 
-    echo -e "${GREEN}👋 Cleanup done. Bye!${NC}"
+    echo -e "${GREEN}Cleanup done. Bye!${NC}"
     exit 0
 }
 
@@ -232,8 +232,8 @@ else
 fi
 
 # ---------------- Run the velocity PID demo ----------------
-echo -e "${BLUE}🔄 Starting velocity PID demo...${NC}"
-echo -e "${GREEN}👀 You should see:${NC}"
+echo -e "${BLUE}Starting velocity PID demo...${NC}"
+echo -e "${GREEN}You should see:${NC}"
 echo -e "${GREEN}   - Gazebo window with x500 drone${NC}"
 echo -e "${GREEN}   - Drone will ARM, takeoff with velocity control${NC}"
 echo -e "${GREEN}   - PID controllers will track velocity setpoints${NC}"
