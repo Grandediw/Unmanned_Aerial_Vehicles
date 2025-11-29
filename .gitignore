@@ -45,11 +45,11 @@ htmlcov/
 *.log
 
 # Data and results files
-*.csv
-*.txt
-results/
-data/
-*.bag
+# *.csv
+# *.txt
+# results/
+# data/
+# *.bag
 
 # LaTeX files (keep papers private)
 *.tex
