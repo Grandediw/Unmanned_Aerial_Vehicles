@@ -28,8 +28,6 @@ Dynamics are provided by **PX4 SITL**, i.e. there is no separate full nonlinear 
 
 ### 1.2 Main Components (Conceptual)
 
-> Exact filenames/executables may differ slightly; see `quadrotor_gp_mpc/nodes/` and the launch files in your repo.
-
 1. **Cascade PID Controller node**
    - 3-layer, 9-loop cascade:
      - Position PIDs → velocity setpoints  
@@ -59,7 +57,6 @@ Dynamics are provided by **PX4 SITL**, i.e. there is no separate full nonlinear 
    - Rosbag parsing and plotting scripts (e.g. “comprehensive analysis” plots: XY tracks, errors, velocities, control outputs).
    - Scripts to extract data from rosbag and train a GP model from recorded trajectories.
 
----
 
 ## 2. Prerequisites
 
