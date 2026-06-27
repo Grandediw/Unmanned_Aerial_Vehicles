@@ -1,233 +1,100 @@
 Quadrotor GP-MPC Workspace
 
-This ROS 2 workspace contains controllers, simulation tools, and analysis scripts for quadrotor trajectory tracking in PX4 SITL.
+This repository contains a ROS 2 workspace for testing and comparing quadrotor trajectory tracking controllers in PX4 SITL.
 
-The project compares three control strategies:
+The project focuses on three control approaches:
 
-* a 9-loop cascade PID controller,
-* an acceleration-level linear Model Predictive Controller (MPC),
-* an experimental Gaussian-Process-enhanced MPC (GP-MPC) trained offline from flight data.
+* Cascade PID controller
+* Linear Model Predictive Controller
+* Gaussian Process-enhanced MPC
 
-The focus of this repository is the implementation, testing, and comparison of control approaches inside a realistic PX4 / ROS 2 / Gazebo SITL environment.
+The implementation is tested in a realistic PX4 / ROS 2 / Gazebo simulation environment.
 
 ⸻
 
-Project Documentation
+Project Documents
 
-This repository accompanies the final project on unmanned aerial vehicles and quadrotor control.
+The full report and final presentation are available here:
 
-Document	Description
-Final Report	Complete project report describing the methodology, controller design, implementation, experiments, and results.
-Final Presentation	Final presentation summarizing the project, architecture, control strategies, and main results.
+* Final Report
+* Final Presentation
 
-Recommended repository layout for documentation:
+Place the files in the repository like this:
 
 docs/
 ├── Unmanned_Aerial_Vehicles_Stefano_Tonini (4).pdf
-├── Unmanned_Vehicles_Presentation.pdf
-└── images/
+└── Unmanned_Vehicles_Presentation.pdf
 
 ⸻
 
-Key Features
+Overview
 
-* ROS 2 Humble integration
-* PX4 SITL simulation using the gz_x500 quadrotor model
-* Offboard control through PX4 topics
-* Cascade PID controller for conservative trajectory tracking
-* Linear MPC based on a double-integrator model
-* GP-MPC extension with offline Gaussian Process residual learning
-* Geometric allocation from desired acceleration to attitude and thrust commands
-* Rosbag-based logging and analysis
-* Python scripts for plotting, comparison, and GP training
+The workspace includes:
 
-⸻
-
-1. System Overview
-
-1.1 High-Level Architecture
-
-The workspace is built around PX4 SITL and ROS 2 Humble.
-
-PX4 handles the low-level attitude and rate stabilization, while ROS 2 nodes provide trajectory generation, controller logic, data logging, and analysis.
-
-Conceptually, the system is organized as follows:
-
-Trajectory Generator
-        ↓
-Controller Node
-(PID / MPC / GP-MPC)
-        ↓
-Geometric Allocation
-        ↓
-PX4 Offboard Interface
-        ↓
-PX4 SITL + Gazebo
-        ↓
-Vehicle Odometry / State Feedback
-
-The main ROS 2 components are:
-
-* a trajectory generator for circular and figure-eight references,
+* a trajectory generator,
 * a cascade PID controller,
 * a linear MPC controller,
-* an optional GP residual correction module,
-* logging and plotting tools for post-flight analysis.
+* a GP-MPC controller,
+* rosbag logging tools,
+* Python analysis and plotting scripts.
 
-The vehicle dynamics are provided by PX4 SITL, meaning that this repository does not include a separate full nonlinear quadrotor simulator.
-
-⸻
-
-2. Controllers
-
-2.1 Cascade PID Controller
-
-The cascade PID controller is implemented as a 3-layer, 9-loop architecture:
-
-Position PID
-    ↓
-Velocity setpoint
-Velocity PID
-    ↓
-Attitude and thrust setpoint
-Attitude PID
-    ↓
-Body-rate commands
-
-The controller outputs VehicleRatesSetpoint messages and normalized thrust commands to PX4 in offboard mode.
-
-This controller is designed to be conservative and stable, making it useful as a baseline and fallback controller.
+PX4 handles the low-level attitude and rate control.
+The ROS 2 nodes generate trajectories, compute control commands, and analyze the flight data.
 
 ⸻
 
-2.2 Linear MPC Controller
+Controllers
 
-The MPC controller uses a linear 6-state double-integrator model in position and velocity space.
+Cascade PID
+
+The cascade PID controller uses several control loops for:
+
+* position control,
+* velocity control,
+* attitude control,
+* body-rate command generation.
+
+It is used as a simple and stable baseline controller.
+
+Linear MPC
+
+The MPC controller uses a double-integrator model with position and velocity states.
 
 The state is:
 
-x = [x, y, z, v_x, v_y, v_z]^T
+x = [x, y, z, vx, vy, vz]
 
-The control input is:
+The input is:
 
-u = [a_x, a_y, a_z, r]^T
+u = [ax, ay, az, yaw_rate]
 
-where:
+The MPC computes desired accelerations, which are converted into attitude and thrust commands.
 
-* a_x, a_y, and a_z are desired accelerations,
-* r is the yaw-rate command.
+GP-MPC
 
-The MPC solves a finite-horizon optimization problem with:
+The GP-MPC controller extends the linear MPC with a Gaussian Process residual model.
 
-* quadratic tracking cost,
-* control effort penalty,
-* position constraints,
-* velocity constraints,
-* acceleration constraints.
+The GP is trained offline from simulation data and provides small corrections to the MPC acceleration command.
 
-The optimization problem is implemented using CasADi and solved using a general-purpose solver such as IPOPT.
-
-After solving, the desired acceleration is converted into attitude and thrust commands using a geometric allocation layer before being sent to PX4.
+The correction is limited to avoid unstable or aggressive behavior.
 
 ⸻
 
-2.3 GP-Enhanced MPC Controller
+Requirements
 
-The GP-MPC controller extends the linear MPC by adding a learned residual correction.
-
-The Gaussian Process model is trained offline from SITL flight data. During execution, the GP predicts small residual corrections to the MPC acceleration command.
-
-The GP input is the concatenation of the current state and control command:
-
-[x_k; u_k]
-
-where:
-
-x_k \in \mathbb{R}^6
-
-and
-
-u_k \in \mathbb{R}^4
-
-The GP output represents a residual correction to the translational dynamics.
-
-To preserve stability and avoid aggressive behavior, the GP correction is deliberately limited using saturation before being applied to the MPC command.
-
-The GP is currently trained offline from recorded rosbag or CSV flight data. It is not trained online during flight.
-
-⸻
-
-3. Tools and Utilities
-
-This workspace includes scripts for:
-
-* extracting data from rosbags,
-* converting flight logs to CSV,
-* plotting trajectories,
-* comparing tracking errors,
-* visualizing controller outputs,
-* training Gaussian Process models,
-* generating comprehensive analysis plots.
-
-Typical analysis plots include:
-
-* XY trajectory tracking,
-* position error over time,
-* velocity tracking,
-* control input comparison,
-* thrust and attitude command evolution.
-
-Optional example image layout:
-
-<p align="center">
-  <img src="docs/images/xy_tracking.png" width="700">
-</p>
-<p align="center">
-  <img src="docs/images/tracking_error.png" width="700">
-</p>
-
-⸻
-
-4. Prerequisites
-
-Operating System
-
-* Ubuntu 22.04 LTS
-
-ROS 2
-
+* Ubuntu 22.04
 * ROS 2 Humble
-
-PX4
-
 * PX4 Autopilot
-* Gazebo simulation support
-* Example SITL target: px4_sitl gz_x500
+* Gazebo
+* Python 3
 
-Python Dependencies
+Python packages:
 
-The main Python dependencies are:
-
-* numpy
-* scipy
-* matplotlib
-* casadi
-* pandas
-* scikit-learn
-* rosbags or ROS 2 bag utilities
-
-Install typical system dependencies:
-
-sudo apt update
-sudo apt install ros-humble-desktop python3-rosdep2 python3-colcon-common-extensions
-
-Install Python packages:
-
-pip install numpy scipy matplotlib casadi pandas scikit-learn rosbags
+pip install numpy scipy matplotlib pandas casadi scikit-learn rosbags
 
 ⸻
 
-5. Installation
+Installation
 
 Clone the repository:
 
@@ -237,11 +104,6 @@ cd <repository-name>
 Source ROS 2:
 
 source /opt/ros/humble/setup.bash
-
-Install dependencies:
-
-rosdep update
-rosdep install --from-paths src --ignore-src -r -y
 
 Build the workspace:
 
@@ -253,172 +115,92 @@ source install/setup.bash
 
 ⸻
 
-6. Running the Simulation
+Running PX4 SITL
 
-Start PX4 SITL with the X500 model:
+Start PX4 with the X500 model:
 
 cd <PX4-Autopilot>
 make px4_sitl gz_x500
 
-In another terminal, source ROS 2 and the workspace:
+In another terminal, source the workspace:
 
 source /opt/ros/humble/setup.bash
 source install/setup.bash
 
-Launch the desired controller or node according to the package structure.
+Then run the desired ROS 2 controller node.
 
 Example:
 
-ros2 launch <package_name> <launch_file>.py
+ros2 run <package_name> <node_name>
 
 ⸻
 
-7. Running the Controllers
+Data Logging
 
-Cascade PID
-
-ros2 run <package_name> <pid_node>
-
-Linear MPC
-
-ros2 run <package_name> <mpc_node>
-
-GP-MPC
-
-ros2 run <package_name> <gp_mpc_node>
-
-The exact package and node names may depend on the final repository structure.
-
-⸻
-
-8. Data Logging
-
-Record flight data using rosbag:
+To record all ROS 2 topics:
 
 ros2 bag record -a
 
-Or record selected topics:
+To record only selected topics:
 
 ros2 bag record \
   /fmu/out/vehicle_odometry \
   /fmu/in/vehicle_rates_setpoint \
-  /fmu/in/vehicle_attitude_setpoint \
-  /trajectory_reference
+  /fmu/in/vehicle_attitude_setpoint
 
-Logged data can then be used for:
-
-* trajectory analysis,
-* controller comparison,
-* GP training,
-* performance evaluation.
+The recorded data can be used for plotting, analysis, and GP training.
 
 ⸻
 
-9. GP Training Workflow
+Results
 
-The GP residual model is trained offline using recorded flight data.
-
-Typical workflow:
-
-1. Run a simulation using PID or MPC.
-2. Record the relevant ROS 2 topics.
-3. Extract position, velocity, and control data.
-4. Compute residual dynamics from measured and predicted behavior.
-5. Train a Gaussian Process model.
-6. Save the trained model.
-7. Load the model inside the GP-MPC controller.
-
-The GP correction is intentionally kept small and saturated during control execution.
-
-⸻
-
-10. Results and Evaluation
-
-The controllers are evaluated in PX4 SITL using reference trajectories such as:
+The controllers are tested on reference trajectories such as:
 
 * circular trajectories,
 * figure-eight trajectories.
 
 The comparison focuses on:
 
-* trajectory tracking accuracy,
-* position error,
+* trajectory tracking error,
 * velocity tracking,
-* control smoothness,
-* robustness inside PX4 SITL,
-* effect of GP residual correction on MPC performance.
+* control effort,
+* stability in PX4 SITL,
+* effect of the GP correction.
 
-The full discussion of methodology and results is available in the Final Report.
+More details are available in the Final Report.
 
 ⸻
 
-11. Repository Structure
-
-A recommended structure for the repository is:
+Repository Structure
 
 .
 ├── README.md
 ├── docs/
 │   ├── Unmanned_Aerial_Vehicles_Stefano_Tonini (4).pdf
-│   ├── Unmanned_Vehicles_Presentation.pdf
-│   └── images/
+│   └── Unmanned_Vehicles_Presentation.pdf
 ├── src/
-│   ├── trajectory_generator/
-│   ├── cascade_pid_controller/
-│   ├── mpc_controller/
-│   ├── gp_mpc_controller/
-│   └── analysis_tools/
 ├── scripts/
-│   ├── plotting/
-│   ├── rosbag_processing/
-│   └── gp_training/
 └── data/
-    ├── rosbags/
-    ├── csv/
-    └── trained_models/
 
 ⸻
 
-12. Limitations
+Limitations
 
-This project focuses on controller implementation and comparison inside PX4 SITL.
+This project is focused on simulation and controller comparison.
 
-Current limitations include:
+Current limitations:
 
-* no full nonlinear custom quadrotor model,
-* no online GP training,
-* no complex obstacle avoidance,
-* GP corrections are intentionally small for safety,
-* controller performance depends on PX4 SITL configuration and tuning.
-
-⸻
-
-13. Future Work
-
-Possible extensions include:
-
-* online GP model adaptation,
-* more advanced nonlinear MPC formulation,
-* obstacle avoidance,
-* wind disturbance testing,
-* comparison with additional learning-based controllers,
-* deployment on real hardware,
-* improved controller tuning and benchmarking.
+* GP training is offline only,
+* no real drone deployment,
+* no obstacle avoidance,
+* no custom nonlinear quadrotor simulator.
 
 ⸻
 
-14. Author
+Author
 
 Stefano Tonini
 
-Project topic: Unmanned Aerial Vehicles, Quadrotor Control, MPC, and Gaussian Process-enhanced MPC
+Project topic: Quadrotor trajectory tracking using PID, MPC, and GP-MPC
 
 ⸻
-
-15. License
-
-Add the chosen license for this repository here.
-
-Example:
-
-MIT License
