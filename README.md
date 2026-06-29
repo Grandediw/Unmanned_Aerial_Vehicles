@@ -19,7 +19,7 @@ The full report and final presentation are included in the `docs` folder.
 | Document           | File                                                                                                          |
 | ------------------ | ------------------------------------------------------------------------------------------------------------- |
 | Final Report       | [Unmanned_Aerial_Vehicles_Stefano_Tonini (4).pdf](docs/Unmanned_Aerial_Vehicles_Stefano_Tonini%20%284%29.pdf) |
-| Final Presentation | [Unmanned_Vehicles_Presentation.pdf](docs/Unmanned_Vehicles_Presentation.pdf)                                 |
+| Final Presentation | [Unmanned_Vehicles_Presentation.pdf](docs/Unmanned_Vehicles_Presentation(5).pdf)                                 |
 
 Expected structure:
 
